@@ -17,7 +17,7 @@ jobs:
       - name: Install TeX
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends texlive-xetex texlive-lang-cyrillic texlive-latex-extra texlive-fonts-recommended texlive-pictures texlive-science latexmk
+          sudo apt-get install -y --no-install-recommends texlive-xetex texlive-lang-cyrillic texlive-latex-extra texlive-fonts-recommended texlive-pictures texlive-science latexmk poppler-utils
       - name: Build and check
         run: |
           python3 tools/build.py --all
@@ -33,6 +33,26 @@ jobs:
               for pattern in ('Overfull', 'undefined references', 'undefined citations', 'Missing character'):
                   if re.search(pattern, log, re.I):
                       raise SystemExit(question + ': ' + pattern)
+          PY
+      # Temporary review transport while the local rendering environment is unavailable.
+      - name: Render revised tickets for visual review
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64, re, subprocess
+          for name in ('question_1_9', 'question_1_10', 'question_1_11'):
+              pdf = Path('build') / (name + '.pdf')
+              info = subprocess.check_output(['pdfinfo', str(pdf)], text=True)
+              pages = int(re.search(r'^Pages:\s+(\d+)', info, re.M).group(1))
+              print('REVIEW_PAGES|' + name + '|' + str(pages), flush=True)
+              for page in range(1, pages + 1):
+                  stem = Path('build') / ('review_' + name + '_' + str(page))
+                  subprocess.run(['pdftoppm', '-r', '85', '-f', str(page), '-l', str(page),
+                                  '-singlefile', '-png', str(pdf), str(stem)], check=True)
+                  data = base64.b64encode(stem.with_suffix('.png').read_bytes()).decode()
+                  image_id = name + '_p' + str(page)
+                  for chunk in range(0, len(data), 6000):
+                      print('REVIMG|' + image_id + '|' + str(chunk // 6000) + '|' + data[chunk:chunk+6000], flush=True)
           PY
       - uses: actions/upload-artifact@v7
         with:
