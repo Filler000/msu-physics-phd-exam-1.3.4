@@ -1,0 +1,23 @@
+\Subhead{1.4.2}{Укороченные уравнения}
+\textbf{Задача МММА} --- отделить быструю несущую от медленного изменения амплитуды и фазы. Пусть
+\begin{equation}\label{eq:averagebase}
+ \ddot x+\omega_0^2x=\varepsilon R(x,\dot x,t),\qquad \varepsilon\ll1.
+\end{equation}
+Вводим \emph{зависящие от времени} $A(t),\phi(t)$:
+\begin{equation}
+ x=A(t)\cos\theta(t),\quad\theta=\omega_0t+\phi(t),\quad
+ \dot A\cos\theta-A\dot\phi\sin\theta=0.
+\end{equation}
+Последнее --- дополнительное условие выбора двух переменных; оно даёт $\dot x=-\omega_0A\sin\theta$. Дифференцируем и подставляем в исходное уравнение. Вместе с дополнительным условием получаем точные до усреднения соотношения
+\begin{equation}
+ \dot A=-\frac{\varepsilon R}{\omega_0}\sin\theta,\qquad
+ A\dot\phi=-\frac{\varepsilon R}{\omega_0}\cos\theta.
+\end{equation}
+При $|\dot A|\ll\omega_0A$, $|\dot\phi|\ll\omega_0$ за период $A,\phi$ почти постоянны. Усредняем правые части:
+\begin{equation}\label{eq:averaged}
+ \dot A=-\frac{\varepsilon}{\omega_0}\avg{R\sin\theta},\qquad
+ \dot\phi=-\frac{\varepsilon}{\omega_0 A}\avg{R\cos\theta}.
+\end{equation}
+Это укороченные уравнения метода медленно меняющихся амплитуд. Вместо быстрых колебаний вычисляем медленное установление; нули правых частей дают режимы, линеаризация --- их устойчивость. Для $\varepsilon R=-2\gamma\dot x-\alpha x^3$ они дают $\dot A=-\gamma A$, $\dot\phi=3\alpha A^2/(8\omega_0)$; для Ван-дер-Поля --- \eqref{eq:vdpslow}. Резонансную разность фаз с внешней силой сохраняют как медленную переменную. При $A=0$ полярные координаты вырождаются: используют две квадратуры.
+% В студенческом конспекте Пятакова, PDF-с.53, фазовая проекция ошибочно
+% содержит sin вместо cos; здесь обе проекции получены из двух условий выше.

@@ -1,0 +1,116 @@
+\input{config/version}
+\usepackage[a4paper,left=21mm,right=19mm,top=20mm,bottom=22mm,headheight=16pt]{geometry}
+\usepackage{fontspec}
+\setmainfont{DejaVuSerif}[Path=fonts/,Extension=.ttf,UprightFont=*,BoldFont=*-Bold,ItalicFont=*-Italic,BoldItalicFont=*-BoldItalic]
+\setsansfont{DejaVuSerif}[Path=fonts/,Extension=.ttf,UprightFont=*,BoldFont=*-Bold,ItalicFont=*-Italic,BoldItalicFont=*-BoldItalic]
+\setmonofont{DejaVuSansMono}[Path=fonts/,Extension=.ttf,Scale=MatchLowercase]
+\usepackage{polyglossia}
+\setdefaultlanguage{russian}
+\setotherlanguage{english}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{graphicx,booktabs,longtable,array,enumitem}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{fancyhdr}
+\usepackage[unicode,colorlinks=true,linkcolor=MidnightBlue,citecolor=MidnightBlue,urlcolor=MidnightBlue,breaklinks=true]{hyperref}
+\usepackage{xurl}
+\usepackage{needspace,xstring}
+\usepackage{bookmark}
+\hypersetup{pdftitle={Радиофизика 1.3.4: экзаменационный сборник},pdfauthor={Учебный проект}}
+\setlength{\parindent}{1.15em}
+\setlength{\parskip}{2pt}
+\setlength{\emergencystretch}{4em}
+\setlist{nosep,leftmargin=1.6em,topsep=3pt}
+\setcounter{tocdepth}{0}
+\numberwithin{equation}{section}
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small Радиофизика 1.3.4}
+\fancyhead[R]{\small Редакция \ProjectVersion\ · \LastEditDate}
+\fancyfoot[C]{\thepage}
+\renewcommand{\chaptermark}[1]{}
+\newcommand{\dd}{\mathop{}\!\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\avg}[1]{\left\langle #1\right\rangle}
+\newcommand{\abs}[1]{\left|#1\right|}
+
+\usepackage{tikz,circuitikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\setcounter{secnumdepth}{2}
+\hypersetup{bookmarksdepth=2}
+\newcommand{\flagicon}{\tikz[baseline=-.4ex,scale=.15]{\draw[black!70] (0,0)--(0,1.8);\filldraw[fill=Goldenrod,draw=black!70] (0,1.8)--(1.5,1.5)--(0,1.1)--cycle;}}
+\newcommand{\clockicon}{\tikz[baseline=-.4ex,scale=.15]{\draw (0,1) circle (1);\draw (0,1.7)--(0,1)--(.6,.7);}}
+\newcommand{\bookicon}{\tikz[baseline=-.4ex,scale=.15]{\filldraw[fill=ForestGreen!25,draw=ForestGreen!80!black] (0,0)--(-1.1,.3)--(-1.1,1.8)--(0,1.5)--(1.1,1.8)--(1.1,.3)--cycle;\draw[ForestGreen!80!black] (0,0)--(0,1.5);}}
+\newcommand{\reviewunread}{\textcolor{BrickRed}{\textbf{--}}}
+\newcommand{\reviewread}{\textcolor{RoyalBlue}{$\checkmark$}}
+\newcommand{\reviewaccepted}{\textcolor{ForestGreen}{$\checkmark\!\checkmark$}}
+
+% Source headings are the single authority for numbering and the question list.
+\providecommand{\OnlySection}{}
+\providecommand{\OnlyQuestion}{}
+\newcommand{\SetState}[4]{\expandafter\def\csname state:#1\endcsname{\csname #2icon\endcsname\,В.\csname review#3\endcsname\,Д.\csname review#4\endcsname}}
+\DeclareRobustCommand{\State}[1]{\mbox{\ifcsname state:#1\endcsname\csname state:#1\endcsname\else\bookicon\,В.\reviewunread\,Д.\reviewunread\fi}}
+\newcommand{\BackToList}[1]{\texorpdfstring{\hyperlink{list:#1}{\textcolor{MidnightBlue}{\ensuremath{\uparrow}}}}{}}
+\newcommand{\Qhead}[3]{%
+ \Needspace{12\baselineskip}%
+ \StrBehind{#1}{.}[\GroupNumber]\setcounter{section}{\numexpr\GroupNumber-1\relax}%
+ \def\CurrentGroup{#1}%
+ \section[#2]{#2\enspace\BackToList{#1}}\label{q:#1}%
+ \addtocontents{qlist}{\protect\ListGroup{#1}{#2}{\thepage}}%
+ \noindent\State{#1}\quad{\footnotesize\textit{Программа:} #3}\par\smallskip}
+\newcommand{\Subhead}[2]{%
+ \StrBehind[2]{#1}{.}[\SubNumber]\setcounter{subsection}{\numexpr\SubNumber-1\relax}%
+ \subsection[#2]{#2\enspace\BackToList{#1}}\label{q:#1}%
+ \ifcsname externalcounter:#1\endcsname
+  \IfStrEq{\OnlyQuestion}{#1}{\setcounter{equation}{\csname externalcounter:#1\endcsname}}{}\fi
+ \RecordEqOffset{#1}%
+ \addtocontents{qlist}{\protect\ListLeaf{#1}{#2}{\thepage}}%
+ \noindent{\footnotesize\State{#1}}\par\smallskip}
+\newcommand{\QuestionFile}[2]{%
+ \IfStrEq{\OnlyQuestion}{}{\input{#2}}{%
+  \IfStrEq{\OnlyQuestion}{#1}{\input{#2}}{%
+   \StrBefore[2]{\OnlyQuestion}{.}[\WantedGroup]%
+   \IfStrEq{\WantedGroup}{#1}{\input{#2}}{}}}}
+\newcommand{\Subfile}[2]{%
+ \IfStrEq{\OnlyQuestion}{}{\input{#2}}{%
+  \IfStrEq{\OnlyQuestion}{\CurrentGroup}{\input{#2}}{%
+   \IfStrEq{\OnlyQuestion}{#1}{\input{#2}}{}}}}
+\newcommand{\IncludeSection}[2]{%
+ \IfStrEq{\OnlyQuestion}{}{%
+  \IfStrEq{\OnlySection}{}{\setcounter{chapter}{\numexpr#1-1\relax}\input{#2}}{%
+   \IfStrEq{\OnlySection}{#1}{\setcounter{chapter}{\numexpr#1-1\relax}\input{#2}}{}}}{%
+  \StrBefore{\OnlyQuestion}{.}[\WantedChapter]%
+  \IfStrEq{\WantedChapter}{#1}{\setcounter{chapter}{\numexpr#1-1\relax}\input{#2}}{}}}
+\newcommand{\ListGroup}[3]{\par\addvspace{5pt}\noindent
+ \hypertarget{list:#1}{}\textbf{\hyperref[q:#1]{#1.\ #2}}\nobreak\hspace{.6em}{\scriptsize\State{#1}}\hfill\hyperref[q:#1]{#3}\par\nopagebreak}
+\newcommand{\ListLeaf}[3]{\par\noindent\hangindent=1.6em\hangafter=0
+ \hypertarget{list:#1}{}\hyperref[q:#1]{#1.\ #2}\nobreak\hspace{.5em}{\scriptsize\State{#1}}\hfill\hyperref[q:#1]{#3}\par}
+\makeatletter
+\newcommand{\QuestionList}{\chapter*{Список вопросов}\addcontentsline{toc}{chapter}{Список вопросов}%
+ \noindent\small Нажмите название для перехода к ответу; стрелка $\uparrow$ у заголовка возвращает к этой строке.\par\medskip
+ \begingroup\fontsize{9}{11}\selectfont\setlength{\parskip}{0pt}\@starttoc{qlist}\endgroup}
+\makeatother
+\newcommand{\sources}[1]{\par\smallskip\noindent\textbf{Источники.} #1\par}
+\newcommand{\recap}[1]{\par\smallskip\noindent\textbf{Короткий ответ / для повторения.} #1\par}
+\newcommand{\board}[1]{\par\noindent\textbf{На доске.} #1\par}
+\newcommand{\oral}[1]{\par\noindent\textbf{Вопрос для себя.} #1\par}
+\newcommand{\bait}[1]{\par\noindent\textbf{Удобный вопрос.} #1\par}
+\newcommand{\biblio}{\clearpage\phantomsection\addcontentsline{toc}{chapter}{Использованные источники}\bibliographystyle{unsrtnat}\bibliography{bib/references}}
+\makeatletter
+\renewcommand*\l@section{\@dottedtocline{1}{1.5em}{3.2em}}
+\newcommand{\Qref}[1]{\@ifundefined{r@q:#1}{#1}{\hyperref[q:#1]{#1}}}
+
+\newcommand{\externalEq}[2]{\expandafter\def\csname externalnum:#1\endcsname{#2}}
+\newcommand{\externalEqCounter}[2]{\expandafter\def\csname externalcounter:#1\endcsname{#2}}
+\newcommand{\RecordEqOffset}[1]{\immediate\write\@auxout{\string\newlabel{eqoffset:#1}{{\arabic{equation}}{}}}}
+\let\originaleqref\eqref
+\renewcommand{\eqref}[1]{\@ifundefined{r@#1}{\@ifundefined{externalnum:#1}{\originaleqref{#1}}{(\csname externalnum:#1\endcsname)}}{\originaleqref{#1}}}
+\makeatother
+
+% Only explicit human review decisions go here; default is written/unreviewed.
+\input{config/reviews}
+\ifdefined\UseExternalRefs\InputIfFileExists{build/externalrefs.tex}{}{}\fi
+
+\widowpenalty=10000\clubpenalty=10000

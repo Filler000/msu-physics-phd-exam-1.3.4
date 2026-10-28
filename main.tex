@@ -1,0 +1,32 @@
+\documentclass[11pt,a4paper,oneside]{report}
+\input{config/preamble}
+\begin{document}
+\ifdefined\SubsetBuild
+\pagenumbering{arabic}\QuestionList
+\else
+\begin{titlepage}
+\centering\vspace*{20mm}
+{\Large Физический факультет МГУ\par}\vspace{15mm}
+{\Huge\bfseries Радиофизика\par}\vspace{6mm}
+{\LARGE Специальность 1.3.4\par}\vspace{14mm}
+{\Large Сборник для подготовки\\к кандидатскому экзамену\par}\vspace{14mm}
+{\large Редакция \ProjectVersion: все шесть разделов\par}\vspace{5mm}
+49 вопросов, 100 самостоятельных подвопросов\par
+\vfill Экзамен: 6 ноября 2026 года\par
+Последние правки: \LastEditDate\ (Москва)\par\vspace{9mm}
+{\small Учебная редакция для изучения и рецензирования.\\Принятие В./Д. указывается отдельно.}
+\end{titlepage}
+\pagenumbering{roman}
+\input{frontmatter/intro}
+\tableofcontents
+\QuestionList
+\input{frontmatter/notation}
+\clearpage\pagenumbering{arabic}
+\fi
+\IncludeSection{1}{sections/01_oscillations/main}
+\IncludeSection{2}{sections/02_waves/main}
+\IncludeSection{3}{sections/03_statistics/main}
+\IncludeSection{4}{sections/04_generation/main}
+\IncludeSection{5}{sections/05_antennas/main}
+\IncludeSection{6}{sections/06_detection/main}
+\biblio\end{document}

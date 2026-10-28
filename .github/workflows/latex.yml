@@ -1,0 +1,37 @@
+name: LaTeX
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install TeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends texlive-xetex texlive-lang-cyrillic texlive-latex-extra texlive-fonts-recommended texlive-pictures texlive-science latexmk
+      - name: Build and check
+        run: |
+          python3 tools/build.py --all
+          python3 tools/check.py --compiled --all-sections
+      - uses: actions/upload-artifact@v7
+        with:
+          name: radiophysics-pdf-${{ github.sha }}
+          path: |
+            build/main.pdf
+            build/oscillations.pdf
+            build/waves.pdf
+            build/statistics.pdf
+            build/generation.pdf
+            build/antennas.pdf
+            build/detection.pdf
+          if-no-files-found: error
+          retention-days: 14

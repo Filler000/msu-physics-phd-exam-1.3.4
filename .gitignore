@@ -1,0 +1,76 @@
+# Личные инструкции, входные материалы и рабочие рецензии
+/WORKFLOW.md
+/docs/CHANGES.md
+/local/
+/local_inputs/
+/REVIEW*.md
+/RELEASE*.md
+/AGENT_TASK*.md
+/REVISION_PLAN*.md
+
+# Промежуточные сборки и архивы; готовый сборник и PDF-рисунки сохраняются
+/build/
+/*.pdf
+!/radiophysics.pdf
+/*.zip
+/*.7z
+/*.tar
+/*.tar.gz
+
+# Вспомогательные файлы TeX, в том числе при сборке вне build/
+*.aux
+*.log
+*.toc
+*.qlist
+*.lof
+*.lot
+*.out
+*.xdv
+*.dvi
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.synctex
+*.synctex.gz
+*.synctex(busy)
+*.synctex.gz(busy)
+*.fls
+*.fdb_latexmk
+*.nav
+*.snm
+*.vrb
+*.lol
+*.ilg
+*.ind
+*.idx
+_minted*/
+
+# Локальные настройки редакторов; общая настройка сборки сохраняется
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.code-workspace
+.idea/
+*~
+*.bak
+*.swp
+*.swo
+*.tmp
+.#*
+\#*\#
+
+# Кэши вспомогательных инструментов и локальное окружение
+__pycache__/
+*.py[cod]
+/.venv/
+/.cache/
+/.pytest_cache/
+.env
+.env.*
+
+# Файлы операционной системы
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
