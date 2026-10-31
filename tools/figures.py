@@ -64,8 +64,8 @@ f,ax=plt.subplots(1,2,figsize=(6.3,2.5));t=np.linspace(0,2*np.pi,300)
 for a in ax:a.axhline(0,color='grey',lw=.7);a.axvline(0,color='grey',lw=.7);a.set_aspect('equal')
 ax[0].axvspan(-1.5,0,color='#d8eadb');ax[0].scatter([-.8,-.3,.4],[.6,-.4,.2]);ax[0].set(xlim=(-1.5,1.5),ylim=(-1.2,1.2),xlabel=r'Re $\lambda$',ylabel=r'Im $\lambda$',title='Показатели: Re λ < 0')
 ax[1].fill(np.cos(t),np.sin(t),color='#d8eadb');ax[1].plot(np.cos(t),np.sin(t));ax[1].scatter([.3,.7],[.2,-.3]);ax[1].set(xlim=(-1.3,1.3),ylim=(-1.2,1.2),xlabel=r'Re $\rho$',ylabel=r'Im $\rho$',title='Мультипликаторы: |ρ| < 1');f.tight_layout();save('stability.pdf')
-sol=solve_ivp(lambda t,y:[10*(y[1]-y[0]),28*y[0]-y[1]-y[0]*y[2],y[0]*y[1]-8*y[2]/3],[0,55],[1,1,1],t_eval=np.linspace(5,55,18000),rtol=1e-9,atol=1e-11)
-f=plt.figure(figsize=(5.5,3));a=f.add_subplot(111,projection='3d');a.plot(*sol.y,lw=.28,color='#235d80');a.set(xlabel='x',ylabel='y',zlabel='z',title='Система Лоренца: σ=10, b=8/3, r=28');a.view_init(22,-62);save('lorenz.pdf')
+from chaos_figures import draw_lorenz
+draw_lorenz(P)
 f,ax=plt.subplots(1,2,figsize=(7.8,2.6));t=np.linspace(-5,5,500)
 for z in [0,1,3]:
  width=np.sqrt(1+z*z);ax[0].plot(t,np.exp(-t*t/width**2)/width,label=f'z/|L_D|={z}')
