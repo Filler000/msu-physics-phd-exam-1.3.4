@@ -1,0 +1,24 @@
+% Redrawn from Pyatakov lecture 12, slide "Примеры систем с ДХ".
+% The diode-node capacitance C_1 is made explicit in the dashed branch.
+% Feedback has the exciting polarity used in the text.
+\begin{circuitikz}[european resistors,>=Stealth,font=\small]
+ \node[triode,xscale=-1] (T) at (0,2.8) {};
+ \draw (T.control) -- (1.8,2.8) coordinate (U)
+  to[L,l=$L$] (4.0,2.8) to[R,l=$R$] (6.0,2.8)
+  to[tD,l_=$I_d(V)$] (6.0,0) -- (0,0);
+ \draw (U) to[C,l_=$C$] (1.8,0);
+ \draw (T.cathode) -- (0,1.7) to[R,l_=$R_k$] (0,0) node[ground] {};
+ \draw (T.anode) -- (0,4.6) to[L,l=$L_{\mathrm{ос}}$] (4.0,4.6)
+  to[short,-o] (4.7,4.6) node[right] {$E_a$};
+ \draw[<->] (2.8,3.45) -- (2.8,3.95) node[midway,right] {$M$};
+ \draw[densely dashed] (6.0,2.8) -- (7.7,2.8) to[C,l=$C_1$] (7.7,0) -- (6.0,0);
+ \fill (1.8,2.8) circle (1.6pt);
+ \fill (1.8,0) circle (1.6pt);
+ \fill (6.0,2.8) circle (1.6pt);
+ \fill (6.0,0) circle (1.6pt);
+ \draw[->] (1.0,.55) -- (1.0,2.25) node[midway,left] {$U$};
+ \node at (2.05,1.85) {$-$};
+ \node at (2.05,.95) {$+$};
+ \draw[->,thick] (4.45,3.65) -- (5.45,3.65) node[midway,above] {$I_L=\dot q$};
+ \draw[->] (6.9,2.3) -- (6.9,.5) node[midway,left] {$V$};
+\end{circuitikz}
