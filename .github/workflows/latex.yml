@@ -22,18 +22,8 @@ jobs:
         run: |
           python3 tools/build.py --all
           python3 tools/check.py --compiled --all-sections
-          python3 tools/build.py --question 1.9
-          python3 tools/build.py --question 1.10
-          python3 tools/build.py --question 1.11
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          for question in ('1_9', '1_10', '1_11'):
-              log = Path('build/question_' + question + '.log').read_text()
-              for pattern in ('Overfull', 'undefined references', 'undefined citations', 'Missing character'):
-                  if re.search(pattern, log, re.I):
-                      raise SystemExit(question + ': ' + pattern)
-          PY
+          python3 tools/build.py --questions
+          python3 tools/check.py --compiled --all-sections --questions
       - uses: actions/upload-artifact@v7
         with:
           name: radiophysics-pdf-${{ github.sha }}
@@ -49,10 +39,7 @@ jobs:
           retention-days: 14
       - uses: actions/upload-artifact@v7
         with:
-          name: revised-tickets-9-10-11-${{ github.sha }}
-          path: |
-            build/question_1_9.pdf
-            build/question_1_10.pdf
-            build/question_1_11.pdf
+          name: question-pdfs-${{ github.sha }}
+          path: sections/**/question_*.pdf
           if-no-files-found: error
           retention-days: 14
