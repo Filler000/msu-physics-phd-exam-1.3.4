@@ -114,37 +114,29 @@ def draw_diode(output_dir):
         offset=np.array([.15,0.]) if label!="$v$" else np.array([.12,-.12])
         ax.text(*(end+offset),label,fontsize=17,color="#263e4d",ha="left",va="center")
     
-    # Three concise callouts; their leaders terminate on the intended geometry.
+    # Compact labels; the full explanation is in the surrounding ticket text.
     def label(text,xy,textxy,color="#263e4d",align="left"):
         ax.annotate(text,xy=xy,xytext=textxy,fontsize=12.8,color=color,ha=align,
                     va="center",linespacing=1.4,
                     arrowprops={"arrowstyle":"-","color":"#8094a0","lw":.9},
                     bbox={"boxstyle":"round,pad=.25","fc":"white","ec":"none","alpha":.95},
                     zorder=12)
-    label("Расходящаяся спираль",spiral[:,950],[-5.1,4.9])
-    label("Скачок вниз\nпри постоянных $i,u$",down[:,0]*.50+down[:,1]*.50,[4.45,.85],
+    label("Расходящаяся спираль",spiral[:,950],[-6.0,4.6])
+    label("Скачок $+v$",down[:,0]*.50+down[:,1]*.50,[4.45,.6],
           color=orange)
-    label("По нижней ветви:\nток $i$ уменьшается",lower[:,270],[1.5,-4.6])
-    label("Скачок вверх\nпри постоянных $i,u$",up[:,0]*.50+up[:,1]*.50,[-5.9,-.75],
+    label("$i$ уменьшается",lower[:,270],[1.1,-4.5])
+    label("Скачок $-v$",up[:,0]*.50+up[:,1]*.50,[-6.2,-.7],
           color=orange)
-    
-    ax.text(-1.2,6.0,"S-образная поверхность, вытянутая вдоль $u$",
-            fontsize=18,weight="medium",ha="center",color="#203d50")
-    ax.text(-1.2,-5.6,"Качественная геометрия движения — не численное решение",
-            fontsize=11.5,ha="center",color="#6b7f8b")
-    ax.set_xlim(-7.5,8.1); ax.set_ylim(-5.9,6.45)
+
+    ax.set_xlim(-7.5,8.1); ax.set_ylim(-5.7,5.1)
     fig.subplots_adjust(left=.025,right=.985,bottom=.025,top=.985)
     # At the final document width the annotations are 8.5 pt, below body text.
-    scale=6.4/12.4
+    scale=4.4/12.4
     for artist in fig.findobj(match=matplotlib.text.Text):
         artist.set_fontsize(8.5)
     for artist in ax.texts:
         text=artist.get_text()
-        if text.startswith("S-образная"):
-            artist.set_fontsize(10.5)
-        elif text.startswith("Качественная геометрия"):
-            artist.set_fontsize(7.5)
-        elif text in ("$i$", "$u$", "$v$"):
+        if text in ("$i$", "$u$", "$v$"):
             artist.set_fontsize(9.5)
     for artist in ax.lines:
         artist.set_linewidth(artist.get_linewidth()*scale)
@@ -156,7 +148,7 @@ def draw_diode(output_dir):
         artist.set_linewidths(artist.get_linewidths()*scale)
         if hasattr(artist,"get_sizes"):
             artist.set_sizes(artist.get_sizes()*scale**2)
-    fig.set_size_inches(6.4,9.4*scale)
+    fig.set_size_inches(4.4,4.4*10.8/15.6)
     fig.savefig(OUT/"diode_chaos.pdf",facecolor="white")
     plt.close(fig)
     
@@ -191,12 +183,12 @@ def draw_lorenz(output_dir):
         # Keep the previous crop and hence the trajectory's printed size.
         fig.canvas.draw()
         bbox=fig.get_tightbbox(fig.canvas.get_renderer()).padded(.1)
-        ax.tick_params(axis="both",labelsize=6)
-        ax.zaxis.set_tick_params(labelsize=6)
+        ax.tick_params(axis="both",labelsize=8)
+        ax.zaxis.set_tick_params(labelsize=8)
         for axis in (ax.xaxis,ax.yaxis,ax.zaxis):
-            axis.label.set_size(6.5)
+            axis.label.set_size(8.5)
         ax.set_zlabel("z",labelpad=1)
-        ax.set_title("Система Лоренца: σ=10, b=8/3, r=28",fontsize=7)
+        ax.set_title("Система Лоренца: σ=10, b=8/3, r=28",fontsize=9)
         target=Path(output_dir)/"lorenz.pdf"
         fig.savefig(target,bbox_inches=bbox)
         plt.close(fig)
