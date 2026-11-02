@@ -1,0 +1,17 @@
+% Standalone ticket layout. Content, equation numbers and citations are shared.
+% Loaded only by the selective question driver, before main.tex.
+\makeatletter
+\def\PreviewChapter#1{\refstepcounter{chapter}%
+  \noindent{\small\textsc{#1}}\par\smallskip}
+\def\PreviewChapterStar#1{\Needspace{4\baselineskip}\section*{#1}}
+\def\PreviewChapterDispatch{\@ifstar{\PreviewChapterStar}{\PreviewChapter}}
+\def\PreviewBackToList#1{}
+\def\PreviewBiblio{\par\medskip\phantomsection
+  \addcontentsline{toc}{chapter}{Использованные источники}%
+  \bibliographystyle{unsrtnat}\bibliography{bib/references}}
+\AtBeginDocument{%
+  \renewcommand{\QuestionList}{}%
+  \let\BackToList\PreviewBackToList
+  \let\chapter\PreviewChapterDispatch
+  \let\biblio\PreviewBiblio}
+\makeatother

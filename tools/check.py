@@ -10,7 +10,7 @@ def without_comments(text):
 def inspect_sources():
     errors=[];heads={};leaves={};alltext=[];used=set()
     for f in sorted((ROOT/'sections').rglob('*.tex')):
-        t=without_comments(f.read_text());alltext.append(t)
+        t=without_comments(f.read_text(encoding="utf-8"));alltext.append(t)
         for kind,rows in [('Qhead',heads),('Subhead',leaves)]:
             for match in re.finditer(r'\\'+kind+r'\{([\d.]+)\}\{([^{}]+)\}',t):
                 qid,title=match.groups()
@@ -48,45 +48,55 @@ def inspect_sources():
     if len(labels)!=len(set(labels)):errors.append('Duplicate equation/object labels')
     for label in re.findall(r'\\(?:eqref|ref|hyperref)\{([^}]+)\}',text):
         if label not in labels:errors.append('Unknown label '+label)
-    bib=(ROOT/'bib/references.bib').read_text()
+    bib=(ROOT/'bib/references.bib').read_text(encoding="utf-8")
     keys=set(re.findall(r'@\w+\{([^,]+),',bib))
     for keylist in re.findall(r'\\cite(?:\[[^]]*\])?\{([^}]+)\}',text):
         for key in keylist.split(','):
             if key not in keys:errors.append('Unknown citation '+key)
     for qid,(_,f) in heads.items():
-        t=without_comments(f.read_text())
+        t=without_comments(f.read_text(encoding="utf-8"))
         for macro in ['sources','recap','board','oral','bait']:
             if '\\'+macro+'{' not in t:errors.append(qid+' missing '+macro)
         if not re.search(r'\\Qhead\{[^}]+\}\{[^}]+\}\{[^}]+\}',t):
             errors.append(qid+' missing official formulation')
-    pre=(ROOT/'config/preamble.tex').read_text()
+    pre=(ROOT/'config/preamble.tex').read_text(encoding="utf-8")
     if r'\setcounter{tocdepth}{0}' not in pre:errors.append('TOC must contain chapters only')
-    matrix=(ROOT/'docs/SOURCES.md').read_text()
+    matrix=(ROOT/'docs/SOURCES.md').read_text(encoding="utf-8")
     mapped=set(re.findall(r'^\| (\d+\.\d+)\s',matrix,re.M))
     if mapped!=set(heads):errors.append('Source map and current groups disagree')
     print(f'Source check: {len(heads)} groups, {len(leaves)} subquestions, {len(labels)} stable object labels')
     return errors,heads,leaves
 
-def inspect_build(heads,leaves,all_sections):
+def inspect_build(heads,leaves,all_sections,questions=False):
     errors=[];jobs=['main']
     if all_sections:jobs+=['oscillations','waves','statistics','generation','antennas','detection']
+    if questions:
+        for qid,(_,source) in heads.items():
+            job='question_'+qid.replace('.','_')
+            jobs.append(job)
+            exported=source.parent/(job+'.pdf')
+            built=ROOT/'build'/(job+'.pdf')
+            if not exported.is_file():
+                errors.append('Missing exported PDF '+str(exported.relative_to(ROOT)))
+            elif built.is_file() and exported.read_bytes()!=built.read_bytes():
+                errors.append('Exported PDF differs from checked build '+qid)
     for job in jobs:
         pdf=ROOT/'build'/f'{job}.pdf';log=ROOT/'build'/f'{job}.log'
         if not pdf.is_file() or b'%%EOF' not in pdf.read_bytes()[-1024:]:errors.append('Missing/incomplete PDF '+job)
         if not log.is_file():errors.append('Missing log '+job);continue
-        t=log.read_text(errors='replace')
+        t=log.read_text(encoding='utf-8',errors='replace')
         for pattern in ['Overfull',r'Undefined control sequence',r'undefined references',
                         'undefined citations','Missing character','No hyphenation patterns',
                         r'LaTeX Warning: (?:Reference|Citation).*undefined',r'multiply defined']:
             if re.search(pattern,t,re.I):errors.append(job+': '+pattern)
         if 'Output written on' not in t:errors.append('No successful output '+job)
-    qlist=(ROOT/'build/main.qlist').read_text()
+    qlist=(ROOT/'build/main.qlist').read_text(encoding="utf-8")
     expected={**heads,**leaves}
     listed=re.findall(r'\\List(?:Group|Leaf)\s*\{([^}]+)\}\{([^}]+)\}',qlist)
     if len(listed)!=len(expected):errors.append('Compiled question-list count mismatch')
     for qid,title in listed:
         if qid not in expected or title!=expected[qid][0]:errors.append('Compiled list mismatch '+qid)
-    toc=(ROOT/'build/main.toc').read_text()
+    toc=(ROOT/'build/main.toc').read_text(encoding="utf-8")
     # LaTeX records every level in .toc; tocdepth controls which ones are printed.
     # Presence of section records is therefore not a layout defect.
     chapters=re.findall(r'\\contentsline\s*\{chapter\}\{\\numberline\s*\{(\d+)\}',toc)
@@ -97,8 +107,9 @@ def inspect_build(heads,leaves,all_sections):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--compiled',action='store_true');p.add_argument('--all-sections',action='store_true')
+    p.add_argument('--questions',action='store_true',help='Check every built and exported ticket')
     args=p.parse_args();errors,heads,leaves=inspect_sources()
-    if args.compiled:errors+=inspect_build(heads,leaves,args.all_sections)
+    if args.compiled:errors+=inspect_build(heads,leaves,args.all_sections,args.questions)
     if errors:print('\n'.join(errors),file=sys.stderr);raise SystemExit(1)
     print('Checks passed. This is not human acceptance or a proof of every formula.')
 
